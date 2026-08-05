@@ -1,0 +1,25 @@
+# IDE / Editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Maven build artifacts
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Environment and secrets
+.env
+*.local
