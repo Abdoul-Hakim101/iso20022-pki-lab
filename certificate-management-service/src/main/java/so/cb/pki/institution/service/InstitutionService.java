@@ -1,0 +1,57 @@
+package so.cb.pki.institution.service;
+
+import so.cb.pki.institution.dto.CreateInstitutionRequest;
+import so.cb.pki.institution.dto.InstitutionResponse;
+import so.cb.pki.institution.enums.InstitutionStatus;
+import so.cb.pki.shared.dto.PaginatedResponse;
+
+import java.util.UUID;
+
+public interface InstitutionService {
+    /**
+     * Registers a new institution in the system.
+     *
+     * @param request the registration details containing name and BIC
+     * @return the registered institution details
+     */
+    InstitutionResponse createInstitution(CreateInstitutionRequest request);
+
+    /**
+     * Updates the operational status of an institution (e.g. suspending or activating).
+     *
+     * @param id the unique identifier of the institution
+     * @param status the new operational status
+     * @return the updated institution details
+     */
+    InstitutionResponse updateInstitutionStatus(UUID id, InstitutionStatus status);
+
+    /**
+     * Checks if a given BIC code is associated with a registered and active institution.
+     *
+     * @param bic the Business Identifier Code (BIC) to check
+     * @return true if the institution is registered and has ACTIVE status, false otherwise
+     */
+    boolean isInstitutionActive(String bic);
+
+    /**
+     * Retrieves an institution by its unique identifier.
+     *
+     * @param id the unique identifier of the institution
+     * @return the institution details
+     */
+    InstitutionResponse getInstitutionById(UUID id);
+
+    /**
+     * Retrieves a paginated list of institutions, optionally filtered by a search term.
+     *
+     * @param search optional search term to match institution name or BIC
+     * @param pageNumber zero-based page index
+     * @param pageSize number of records per page
+     * @return paginated list of matching institutions
+     */
+    PaginatedResponse<InstitutionResponse> getInstitutions(
+            String search,
+            int pageNumber,
+            int pageSize
+    );
+}
