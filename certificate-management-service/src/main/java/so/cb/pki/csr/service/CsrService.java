@@ -1,4 +1,4 @@
-package so.cb.pki.csr;
+package so.cb.pki.csr.service;
 
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.ReviewCsrRequest;

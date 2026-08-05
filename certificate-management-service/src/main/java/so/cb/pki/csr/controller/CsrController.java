@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import so.cb.pki.csr.CsrService;
+import so.cb.pki.csr.service.CsrService;
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.ReviewCsrRequest;
 import so.cb.pki.csr.dto.UploadCsrRequest;

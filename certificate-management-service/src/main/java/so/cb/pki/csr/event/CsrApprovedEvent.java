@@ -1,4 +1,4 @@
-package so.cb.pki.csr;
+package so.cb.pki.csr.event;
 
 import java.util.UUID;
 
