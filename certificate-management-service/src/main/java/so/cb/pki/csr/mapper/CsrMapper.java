@@ -1,6 +1,5 @@
 package so.cb.pki.csr.mapper;
 
-import org.springframework.stereotype.Component;
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.UploadCsrRequest;
 import so.cb.pki.csr.entity.Csr;
@@ -9,10 +8,13 @@ import so.cb.pki.csr.enums.CsrStatus;
 import java.time.Instant;
 import java.util.UUID;
 
-@Component
 public class CsrMapper {
 
-    public Csr toEntity(UploadCsrRequest request, UUID institutionId) {
+    private CsrMapper() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static Csr toEntity(UploadCsrRequest request, UUID institutionId) {
         if (request == null) {
             return null;
         }
@@ -28,7 +30,7 @@ public class CsrMapper {
                 .build();
     }
 
-    public CsrResponse toResponse(Csr entity) {
+    public static CsrResponse toResponse(Csr entity) {
         if (entity == null) {
             return null;
         }
