@@ -18,6 +18,9 @@ public interface InstitutionRepository extends JpaRepository<Institution, UUID> 
 
     boolean existsByBic(String bic);
 
+    @Query("SELECT i.id FROM Institution i WHERE i.bic = :bic AND i.status = 'ACTIVE'")
+    Optional<UUID> findActiveIdByBic(@Param("bic") String bic);
+
     @Query("SELECT i FROM Institution i WHERE " +
            "(:search IS NULL OR :search = '' OR " +
            "LOWER(i.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

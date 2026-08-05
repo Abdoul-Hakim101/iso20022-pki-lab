@@ -8,6 +8,7 @@ import so.cb.pki.shared.dto.PaginatedResponse;
 import java.util.UUID;
 
 public interface InstitutionService {
+
     /**
      * Registers a new institution in the system.
      *
@@ -40,6 +41,14 @@ public interface InstitutionService {
      * @return the institution details
      */
     InstitutionResponse getInstitutionById(UUID id);
+
+    /**
+     * Retrieves the ID of an institution by BIC code if it is registered and has ACTIVE status in a single query.
+     *
+     * @param bic the Business Identifier Code (BIC)
+     * @return the unique identifier UUID of the active institution
+     */
+    UUID getActiveInstitutionIdByBic(String bic);
 
     /**
      * Retrieves a paginated list of institutions, optionally filtered by a search term.

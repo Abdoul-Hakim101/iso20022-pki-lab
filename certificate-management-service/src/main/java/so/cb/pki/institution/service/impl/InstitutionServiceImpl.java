@@ -7,13 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import so.cb.pki.institution.service.InstitutionService;
 import so.cb.pki.institution.dto.CreateInstitutionRequest;
 import so.cb.pki.institution.dto.InstitutionResponse;
 import so.cb.pki.institution.entity.Institution;
 import so.cb.pki.institution.enums.InstitutionStatus;
 import so.cb.pki.institution.mapper.InstitutionMapper;
 import so.cb.pki.institution.repository.InstitutionRepository;
-import so.cb.pki.institution.service.InstitutionService;
 import so.cb.pki.shared.dto.PaginatedResponse;
 import so.cb.pki.shared.exception.ApiException;
 
@@ -61,6 +61,13 @@ public class InstitutionServiceImpl implements InstitutionService {
     public InstitutionResponse getInstitutionById(UUID id) {
         Institution entity = getById(id);
         return InstitutionMapper.toResponse(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UUID getActiveInstitutionIdByBic(String bic) {
+        return institutionRepository.findActiveIdByBic(bic)
+                .orElseThrow(() -> new ApiException("Institution with BIC '" + bic + "' is not registered or active"));
     }
 
     @Override
