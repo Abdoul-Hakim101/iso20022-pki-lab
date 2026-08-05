@@ -1,0 +1,15 @@
+# Profiles
+SPRING_PROFILES_ACTIVE: dev
+
+# springdoc
+SPRING_DOC_API_DOCS_ENABLED: true
+SPRING_DOC_SWAGGER_UI_ENABLED: true
+
+# Database
+DB_HOST: localhost
+DB_PORT: 5432
+DB_NAME: certificate_db
+DB_USERNAME: user
+DB_PASSWORD: 123456
+DB_DDL_STRATEGY: validate
+DB_SHOW_SQL: true
