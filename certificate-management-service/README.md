@@ -81,6 +81,8 @@ The application strictly enforces **Spring Modulith** encapsulation boundaries a
 
 | Property | Default Value | Environment Variable | Description |
 | :--- | :--- | :--- | :--- |
+| `server.port` | `8080` | `SERVER_PORT` | Application HTTP Server Port |
+| `cors.allowed-origins` | `http://localhost:3000...` | `CORS_ALLOWED_ORIGINS` | Allowed origins for CORS headers |
 | `pki.ca.dir` | `./keys/ca` | `PKI_CA_DIR` | Directory containing CA keys on disk |
 | `pki.ca.private-key-file` | `private.pem` | `PKI_CA_KEY_FILE` | Central Bank Root CA Private Key file name |
 | `pki.ca.certificate-file` | `chain.pem` | `PKI_CA_CERT_FILE` | Central Bank Root CA Public Certificate file name |
