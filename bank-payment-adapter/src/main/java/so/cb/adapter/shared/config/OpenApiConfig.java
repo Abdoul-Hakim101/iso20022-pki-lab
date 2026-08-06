@@ -22,8 +22,10 @@ public class OpenApiConfig {
                         .description("""
                                 API documentation for the Somali Payment Switch (SPS) Bank Payment Adapter Service.
 
-                                This service acts as the secure integration and translation gateway between the commercial bank's
-                                Core Banking System and the Somali Payment Switch (SPS) interbank network.
+                                Educational & Practice Lab Project:
+                                This service is built strictly for educational, research, and practice purposes
+                                to demonstrate real-world implementation of ISO 20022 XML Digital Signatures,
+                                Central Bank PKI Certificate Trust Validation, and Payment Switch Adapters.
 
                                 Core Functional Responsibilities:
                                 • Outgoing Workflow (Core Banking -> Adapter -> SPS): Validates JSON payment requests, maps JSON to ISO 20022 XML (e.g. pacs.008), digitally signs XML using bank's private key (private.pem), and transmits to SPS.
