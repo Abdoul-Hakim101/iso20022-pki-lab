@@ -30,7 +30,10 @@ cd certs
 # 2. Generate RSA 2048-bit Private Key (private.pem)
 openssl genrsa -out private.pem 2048
 
-# 3. Generate CSR (request.csr) with Bank BIC
+# 3. Option A: Generate CSR using the included san.cnf template
+openssl req -new -key private.pem -out request.csr -config ../san.cnf
+
+# OR Option B: Direct OpenSSL command
 openssl req -new -key private.pem -out request.csr -subj "/C=SO/O=Premier Bank/CN=PMRBSOMM"
 ```
 
