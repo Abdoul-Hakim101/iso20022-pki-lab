@@ -21,6 +21,10 @@ import so.cb.pki.institution.service.InstitutionService;
 import so.cb.pki.shared.dto.PaginatedResponse;
 import so.cb.pki.shared.exception.ApiException;
 
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+
+import java.io.StringReader;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -37,12 +41,39 @@ public class CsrServiceImpl implements CsrService {
 
     @Override
     public void uploadCsr(UploadCsrRequest request) {
+        String trimmedCsrPem = request.csrPem() != null ? request.csrPem().trim() : null;
         log.info("Processing CSR upload request for bank BIC: {}", request.bic());
+        validateCsrPem(trimmedCsrPem);
         UUID institutionId = institutionService.getActiveInstitutionIdByBic(request.bic());
 
-        Csr entity = CsrMapper.toEntity(request, institutionId);
+        UploadCsrRequest cleanRequest = new UploadCsrRequest(request.bic(), trimmedCsrPem);
+        Csr entity = CsrMapper.toEntity(cleanRequest, institutionId);
         entity = csrRepository.save(entity);
         log.info("CSR uploaded successfully with ID: {} for institutionId: {}, BIC: {}", entity.getId(), institutionId, request.bic());
+    }
+
+    private void validateCsrPem(String csrPem) {
+        if (csrPem == null || csrPem.isBlank()) {
+            throw new ApiException("CSR PEM text must not be empty");
+        }
+
+        try (PEMParser pemParser = new PEMParser(new StringReader(csrPem.trim()))) {
+            Object object = pemParser.readObject();
+            if (!(object instanceof PKCS10CertificationRequest csr)) {
+                throw new ApiException("Invalid CSR format: Provided text is not a valid PKCS#10 Certificate Signing Request");
+            }
+            if (csr.getSubject() == null || csr.getSubject().toString().isBlank()) {
+                throw new ApiException("Invalid CSR: Certificate Signing Request does not contain a valid Subject DN");
+            }
+            if (csr.getSubjectPublicKeyInfo() == null) {
+                throw new ApiException("Invalid CSR: Certificate Signing Request does not contain valid Public Key info");
+            }
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("CSR validation failed: {}", e.getMessage());
+            throw new ApiException("Failed to parse CSR PEM text: " + e.getMessage());
+        }
     }
 
     @Override
