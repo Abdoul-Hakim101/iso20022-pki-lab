@@ -6,12 +6,17 @@
 FROM maven:3.9.9-eclipse-temurin-24-alpine AS builder
 WORKDIR /app
 
-# Copy pom.xml and source files
+# Copy pom.xml first to cache Maven dependencies in a separate layer
 COPY pom.xml .
+
+# Download dependencies offline (cached layer unless pom.xml changes)
+RUN mvn dependency:go-offline -B
+
+# Copy source code after dependencies are cached
 COPY src ./src
 
-# Build production jar
-RUN mvn clean package -DskipTests
+# Build production jar using cached dependencies
+RUN mvn package -DskipTests
 
 # 2. Runtime Stage
 FROM eclipse-temurin:24-jre-alpine
