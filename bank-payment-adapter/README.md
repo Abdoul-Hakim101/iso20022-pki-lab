@@ -50,6 +50,9 @@ When the application boots up, `AdapterStartupValidator` executes **4 local in-m
 > [!CAUTION]
 > **Strict Boot Failure Enforcement**: If **ANY** check fails or any required certificate file is missing, the validator logs `CRITICAL STARTUP ERROR` and throws an `IllegalStateException`, **halting Spring Boot startup immediately**.
 
+> [!TIP]
+> **Certificate & Key Onboarding Guide**: For step-by-step instructions on generating private keys, uploading CSRs to Central Bank PKI, downloading certificates, and file placement inside `./certs/`, see [CERTIFICATE_SETUP_GUIDE.md](file:///c:/Users/LENOVO/Desktop/iso20022-lab/bank-payment-adapter/CERTIFICATE_SETUP_GUIDE.md).
+
 ---
 
 ## ⚙️ Configuration Properties
