@@ -20,7 +20,7 @@ flowchart TD
 
     subgraph CSR_Workflow ["2. CSR Submission & Approval"]
         Bank["Commercial Bank<br/>Generates Keypair & CSR"] -->|POST /api/v1/csrs| CSR["csr module<br/>Validates PKCS#10 & Stores PENDING"]
-        Admin -->|PATCH /api/v1/csrs/{id}/review| CSR
+        Admin -->|PATCH /api/v1/csrs/:id/review| CSR
     end
 
     subgraph Event_Issuance ["3. Event-Driven Certificate Issuance"]
@@ -31,7 +31,7 @@ flowchart TD
 
     subgraph Trust_Distribution ["4. Trust Chain Distribution"]
         Bank -->|GET /api/v1/certificates/chain.pem| CERT
-        Bank -->|GET /api/v1/certificates/serial/{sn}/fullchain.pem| CERT
+        Bank -->|GET /api/v1/certificates/serial/:sn/fullchain.pem| CERT
     end
 ```
 
