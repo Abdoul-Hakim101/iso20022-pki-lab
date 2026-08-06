@@ -1,20 +1,16 @@
 package so.cb.adapter.acmt023.service.impl;
 
-import com.prowidesoftware.swift.model.mx.MxAcmt02300103;
-import com.prowidesoftware.swift.model.mx.dic.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import so.cb.adapter.acmt023.dto.AccountVerificationRequestJson;
-import so.cb.adapter.acmt023.dto.SignedAcmt023Response;
-import so.cb.adapter.acmt023.enums.AccountIdentifierType;
 import so.cb.adapter.acmt023.service.AccountVerificationService;
 import so.cb.adapter.shared.config.AdapterProperties;
 import so.cb.adapter.shared.security.XmlSignatureSigningService;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -25,92 +21,102 @@ public class AccountVerificationServiceImpl implements AccountVerificationServic
     private final XmlSignatureSigningService xmlSignatureSigningService;
 
     @Override
-    public SignedAcmt023Response createAndSignAcmt023(AccountVerificationRequestJson request) {
+    public String createAndSignAcmt023Xml(AccountVerificationRequestJson request) {
         String instructingBic = adapterProperties.getBankBic();
-        String messageId = "AVR-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8);
-        log.info("Creating ISO 20022 acmt.023.001.03 for instructing BIC: {}, receiver BIC: {}, accountIdentifier: {}, type: {}",
-                instructingBic, request.receiverBic(), request.accountIdentifier(), request.identifierType());
+        String receiverBic = request.receiverBic();
+        String timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now().atZone(ZoneOffset.UTC));
+        String bizMsgIdr = instructingBic + System.currentTimeMillis();
+        String msgId = instructingBic + (System.currentTimeMillis() + 1);
 
-        try {
-            MxAcmt02300103 mx = new MxAcmt02300103();
-            IdentificationVerificationRequestV03 requestV03 = new IdentificationVerificationRequestV03();
+        log.info("Creating ISO 20022 FPEnvelope acmt.023.001.03 for instructing BIC: {}, receiver BIC: {}, accountIdentifier: {}, type: {}",
+                instructingBic, receiverBic, request.accountIdentifier(), request.identifierType());
 
-            // 1. Header Assignment (assgnmt)
-            IdentificationAssignment3 assgnmt = new IdentificationAssignment3();
-            assgnmt.setMsgId(messageId);
-            assgnmt.setCreDtTm(OffsetDateTime.now(ZoneOffset.UTC));
+        String rawEnvelopeXml = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <FPEnvelope xmlns:header="urn:iso:std:iso:20022:tech:xsd:head.001.001.03"
+                            xmlns:document="urn:iso:std:iso:20022:tech:xsd:acmt.023.001.03"
+                            xmlns="urn:iso:std:iso:20022:tech:xsd:verification_request">
+                  <header:AppHdr>
+                    <header:Fr>
+                      <header:FIId>
+                        <header:FinInstnId>
+                          <header:Othr>
+                            <header:Id>%s</header:Id>
+                          </header:Othr>
+                        </header:FinInstnId>
+                      </header:FIId>
+                    </header:Fr>
+                    <header:To>
+                      <header:FIId>
+                        <header:FinInstnId>
+                          <header:Othr>
+                            <header:Id>%s</header:Id>
+                          </header:Othr>
+                        </header:FinInstnId>
+                      </header:FIId>
+                    </header:To>
+                    <header:BizMsgIdr>%s</header:BizMsgIdr>
+                    <header:MsgDefIdr>acmt.023.001.03</header:MsgDefIdr>
+                    <header:CreDt>%s</header:CreDt>
+                    <document:Sgntr xmlns:document="urn:iso:std:iso:20022:tech:xsd:head.001.001.03"/>
+                  </header:AppHdr>
+                  <document:Document>
+                    <document:IdVrfctnReq>
+                      <document:Assgnmt>
+                        <document:MsgId>%s</document:MsgId>
+                        <document:CreDtTm>%s</document:CreDtTm>
+                        <document:Assgnr>
+                          <document:Agt>
+                            <document:FinInstnId>
+                              <document:Othr>
+                                <document:Id>%s</document:Id>
+                              </document:Othr>
+                            </document:FinInstnId>
+                          </document:Agt>
+                        </document:Assgnr>
+                        <document:Assgne>
+                          <document:Agt>
+                            <document:FinInstnId>
+                              <document:Othr>
+                                <document:Id>%s</document:Id>
+                              </document:Othr>
+                            </document:FinInstnId>
+                          </document:Agt>
+                        </document:Assgne>
+                      </document:Assgnmt>
+                      <document:Vrfctn>
+                        <document:Id>FP</document:Id>
+                        <document:PtyAndAcctId>
+                          <document:Acct>
+                            <document:Id>
+                              <document:Othr>
+                                <document:Id>%s</document:Id>
+                                <document:SchmeNm>
+                                  <document:Prtry>%s</document:Prtry>
+                                </document:SchmeNm>
+                              </document:Othr>
+                            </document:Id>
+                          </document:Acct>
+                        </document:PtyAndAcctId>
+                      </document:Vrfctn>
+                    </document:IdVrfctnReq>
+                  </document:Document>
+                </FPEnvelope>
+                """.formatted(
+                instructingBic,
+                receiverBic,
+                bizMsgIdr,
+                timestamp,
+                msgId,
+                timestamp,
+                instructingBic,
+                receiverBic,
+                request.accountIdentifier(),
+                request.identifierType().name()
+        );
 
-            Party40Choice assgnr = new Party40Choice();
-            PartyIdentification135 assgnrParty = new PartyIdentification135();
-            Party38Choice assgnrChoice = new Party38Choice();
-            OrganisationIdentification29 assgnrOrg = new OrganisationIdentification29();
-            assgnrOrg.setAnyBIC(instructingBic);
-            assgnrChoice.setOrgId(assgnrOrg);
-            assgnrParty.setId(assgnrChoice);
-            assgnr.setPty(assgnrParty);
-            assgnmt.setAssgnr(assgnr);
-
-            requestV03.setAssgnmt(assgnmt);
-
-            // 2. Verification Item (vrfctn)
-            IdentificationVerification4 vrfctn = new IdentificationVerification4();
-            vrfctn.setId("VRF-" + System.currentTimeMillis());
-
-            IdentificationInformation4 ptyAndAcctId = new IdentificationInformation4();
-
-            // Account Identifier & Type (ACCT, EWLT, MSIS, IBAN)
-            CashAccount40 acct = new CashAccount40();
-            AccountIdentification4Choice acctIdChoice = new AccountIdentification4Choice();
-
-            if (request.identifierType() == AccountIdentifierType.IBAN) {
-                acctIdChoice.setIBAN(request.accountIdentifier());
-            } else {
-                GenericAccountIdentification1 othr = new GenericAccountIdentification1();
-                othr.setId(request.accountIdentifier());
-
-                AccountSchemeName1Choice schemeChoice = new AccountSchemeName1Choice();
-                schemeChoice.setCd(request.identifierType().name());
-                othr.setSchmeNm(schemeChoice);
-
-                acctIdChoice.setOthr(othr);
-            }
-
-            acct.setId(acctIdChoice);
-            ptyAndAcctId.setAcct(acct);
-
-            // Receiving Bank Agent (agt)
-            BranchAndFinancialInstitutionIdentification6 agt = new BranchAndFinancialInstitutionIdentification6();
-            FinancialInstitutionIdentification18 finInstnId = new FinancialInstitutionIdentification18();
-            finInstnId.setBICFI(request.receiverBic());
-            agt.setFinInstnId(finInstnId);
-            ptyAndAcctId.setAgt(agt);
-
-            vrfctn.setPtyAndAcctId(ptyAndAcctId);
-            requestV03.addVrfctn(vrfctn);
-
-            mx.setIdVrfctnReq(requestV03);
-
-            // Convert Prowide model to raw ISO 20022 XML string
-            String rawXml = mx.message();
-
-            // Digitally Sign ISO 20022 XML with bank's private.pem and certificate.pem
-            String signedXml = xmlSignatureSigningService.signXml(rawXml);
-
-            log.info("Successfully generated and signed ISO 20022 acmt.023.001.03 messageId: {}", messageId);
-
-            return new SignedAcmt023Response(
-                    "SIGNED",
-                    messageId,
-                    instructingBic,
-                    request.receiverBic(),
-                    request.accountIdentifier(),
-                    request.identifierType(),
-                    signedXml
-            );
-
-        } catch (Exception e) {
-            log.error("Failed to build and sign acmt.023.001.03 message: {}", e.getMessage(), e);
-            throw new IllegalStateException("Failed to generate acmt.023.001.03 message: " + e.getMessage(), e);
-        }
+        String signedXml = xmlSignatureSigningService.signXml(rawEnvelopeXml);
+        log.info("Successfully generated and signed FPEnvelope ISO 20022 acmt.023.001.03 messageId: {}", msgId);
+        return signedXml;
     }
 }

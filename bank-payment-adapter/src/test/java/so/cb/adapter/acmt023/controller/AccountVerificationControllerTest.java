@@ -30,8 +30,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -75,12 +76,13 @@ class AccountVerificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("SIGNED"))
-                .andExpect(jsonPath("$.instructingBic").value("PMRBSOMM"))
-                .andExpect(jsonPath("$.receiverBic").value("IBSBSOMM"))
-                .andExpect(jsonPath("$.accountIdentifier").value("4005006007"))
-                .andExpect(jsonPath("$.identifierType").value("ACCT"))
-                .andExpect(jsonPath("$.signedXml").exists());
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(containsString("<FPEnvelope")))
+                .andExpect(content().string(containsString("PMRBSOMM")))
+                .andExpect(content().string(containsString("IBSBSOMM")))
+                .andExpect(content().string(containsString("4005006007")))
+                .andExpect(content().string(containsString("ACCT")))
+                .andExpect(content().string(containsString("Signature")));
     }
 
     @Test
@@ -97,12 +99,11 @@ class AccountVerificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("SIGNED"))
-                .andExpect(jsonPath("$.instructingBic").value("PMRBSOMM"))
-                .andExpect(jsonPath("$.receiverBic").value("IBSBSOMM"))
-                .andExpect(jsonPath("$.accountIdentifier").value("+252615000000"))
-                .andExpect(jsonPath("$.identifierType").value("MSIS"))
-                .andExpect(jsonPath("$.signedXml").exists());
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(containsString("<FPEnvelope")))
+                .andExpect(content().string(containsString("+252615000000")))
+                .andExpect(content().string(containsString("MSIS")))
+                .andExpect(content().string(containsString("Signature")));
     }
 
     @Test
@@ -119,12 +120,11 @@ class AccountVerificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("SIGNED"))
-                .andExpect(jsonPath("$.instructingBic").value("PMRBSOMM"))
-                .andExpect(jsonPath("$.receiverBic").value("IBSBSOMM"))
-                .andExpect(jsonPath("$.accountIdentifier").value("EWLT-998877"))
-                .andExpect(jsonPath("$.identifierType").value("EWLT"))
-                .andExpect(jsonPath("$.signedXml").exists());
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(containsString("<FPEnvelope")))
+                .andExpect(content().string(containsString("EWLT-998877")))
+                .andExpect(content().string(containsString("EWLT")))
+                .andExpect(content().string(containsString("Signature")));
     }
 
     @Test
@@ -141,12 +141,11 @@ class AccountVerificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.status").value("SIGNED"))
-                .andExpect(jsonPath("$.instructingBic").value("PMRBSOMM"))
-                .andExpect(jsonPath("$.receiverBic").value("IBSBSOMM"))
-                .andExpect(jsonPath("$.accountIdentifier").value("SO82PMRB0000004005006007"))
-                .andExpect(jsonPath("$.identifierType").value("IBAN"))
-                .andExpect(jsonPath("$.signedXml").exists());
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(containsString("<FPEnvelope")))
+                .andExpect(content().string(containsString("SO82PMRB0000004005006007")))
+                .andExpect(content().string(containsString("IBAN")))
+                .andExpect(content().string(containsString("Signature")));
     }
 
     private static void generateTestCertificates(Path dir) throws Exception {

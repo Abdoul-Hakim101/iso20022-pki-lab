@@ -10,6 +10,8 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import so.cb.adapter.shared.config.AdapterProperties;
 
 import javax.xml.crypto.dsig.*;
@@ -45,7 +47,7 @@ public class XmlSignatureSigningServiceImpl implements XmlSignatureSigningServic
 
     @Override
     public String signXml(String rawXml) {
-        log.info("Initiating W3C XML Digital Signature for ISO 20022 document...");
+        log.info("Initiating W3C XML Digital Signature for ISO 20022 FPEnvelope document...");
         try {
             Path certDir = Path.of(adapterProperties.getDir());
             Path privateKeyPath = certDir.resolve(adapterProperties.getPrivateKeyFile());
@@ -79,7 +81,18 @@ public class XmlSignatureSigningServiceImpl implements XmlSignatureSigningServic
             X509Data x509Data = kif.newX509Data(Collections.singletonList(certificate));
             KeyInfo ki = kif.newKeyInfo(Collections.singletonList(x509Data));
 
-            DOMSignContext dsc = new DOMSignContext(privateKey, doc.getDocumentElement());
+            Node parentNode = doc.getDocumentElement();
+            NodeList sgntrList = doc.getElementsByTagNameNS("urn:iso:std:iso:20022:tech:xsd:head.001.001.03", "Sgntr");
+            if (sgntrList.getLength() > 0) {
+                parentNode = sgntrList.item(0);
+            } else {
+                NodeList fallbackSgntr = doc.getElementsByTagName("document:Sgntr");
+                if (fallbackSgntr.getLength() > 0) {
+                    parentNode = fallbackSgntr.item(0);
+                }
+            }
+
+            DOMSignContext dsc = new DOMSignContext(privateKey, parentNode);
 
             XMLSignature signature = fac.newXMLSignature(si, ki);
             signature.sign(dsc);
@@ -92,7 +105,7 @@ public class XmlSignatureSigningServiceImpl implements XmlSignatureSigningServic
             StringWriter writer = new StringWriter();
             trans.transform(new DOMSource(doc), new StreamResult(writer));
 
-            log.info("W3C XML Digital Signature successfully generated.");
+            log.info("W3C XML Digital Signature successfully generated in FPEnvelope.");
             return writer.toString();
 
         } catch (Exception e) {
