@@ -1,9 +1,19 @@
-# Profiles
+# Active Profile
 SPRING_PROFILES_ACTIVE: dev
 
-# springdoc
+# Server Port
+SERVER_PORT: 8081
+
+# springdoc (enabled in dev)
 SPRING_DOC_API_DOCS_ENABLED: true
 SPRING_DOC_SWAGGER_UI_ENABLED: true
 
-CORS_ALLOWED_ORIGINS: http://localhost:3000
+# CORS Configuration
+CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:3001
 
+# Certificate Configuration
+CERTS_DIR: ./certs
+CA_CERT_FILE: chain.pem
+BANK_CERT_FILE: certificate.pem
+PRIVATE_KEY_FILE: private.pem
+STRICT_STARTUP_CHECK: true
