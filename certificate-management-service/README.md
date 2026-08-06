@@ -13,13 +13,26 @@ An enterprise-grade **Public Key Infrastructure (PKI) & Certificate Lifecycle Ma
 The Certificate Management Service acts as the **Central Bank Certificate Authority (CA)** for commercial bank onboarding, Certificate Signing Request (CSR) verification, X.509 Leaf Certificate issuance, revocation management, and CA trust chain distribution (`chain.pem` & `fullchain.pem`).
 
 ```mermaid
-flowchart LR
-Bank["Commercial Bank<br/>Generates Private Key & request.csr"] -->|POST /api/v1/csrs| CSR["csr module<br/>Validates & Stores PENDING CSR"]
-Admin["Central Bank Admin"] -->|PATCH /api/v1/csrs/:id/review| CSR
-CSR -->|Publishes CsrApprovedEvent| NOTIF["notification module<br/>Listens to Event"]
-NOTIF -->|Triggers Issuance| CERT["certificate module<br/>BouncyCastle CA Engine"]
-CERT -->|Signs X.509 Cert| DB[("PostgreSQL pki.certificate")]
-Bank -->|GET /api/v1/certificates/chain.pem| CERT
+flowchart TD
+    subgraph Onboarding ["1. Bank Onboarding"]
+        Admin["Central Bank Admin"] -->|POST /api/v1/institutions| INST["institution module<br/>Registers Bank Institution"]
+    end
+
+    subgraph CSR_Workflow ["2. CSR Submission & Approval"]
+        Bank["Commercial Bank<br/>Generates Keypair & CSR"] -->|POST /api/v1/csrs| CSR["csr module<br/>Validates PKCS#10 & Stores PENDING"]
+        Admin -->|PATCH /api/v1/csrs/{id}/review| CSR
+    end
+
+    subgraph Event_Issuance ["3. Event-Driven Certificate Issuance"]
+        CSR -->|Publishes CsrApprovedEvent| NOTIF["notification module<br/>Listens to Event"]
+        NOTIF -->|Calls CertificateService| CERT["certificate module<br/>BouncyCastle CA Engine"]
+        CERT -->|Persists X.509 Cert| DB[("PostgreSQL Database<br/>pki.institution / pki.csr / pki.certificate")]
+    end
+
+    subgraph Trust_Distribution ["4. Trust Chain Distribution"]
+        Bank -->|GET /api/v1/certificates/chain.pem| CERT
+        Bank -->|GET /api/v1/certificates/serial/{sn}/fullchain.pem| CERT
+    end
 ```
 
 ---
