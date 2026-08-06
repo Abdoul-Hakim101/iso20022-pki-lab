@@ -27,4 +27,5 @@ keys/
 **/keys/
 *.key
 *.pem
-!chain.pem
+
+bank-payment-adapter/certs/
