@@ -1,8 +1,8 @@
 package so.cb.pki.csr.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.ReviewCsrRequest;
-import so.cb.pki.csr.dto.UploadCsrRequest;
 import so.cb.pki.csr.enums.CsrStatus;
 import so.cb.pki.shared.dto.PaginatedResponse;
 
@@ -12,11 +12,12 @@ import java.util.UUID;
 public interface CsrService {
 
     /**
-     * Uploads a new Certificate Signing Request (CSR) for an active institution.
+     * Uploads a new Certificate Signing Request (CSR) for an active institution using multipart form data.
      *
-     * @param request the CSR upload payload containing BIC and CSR PEM
+     * @param file the CSR file payload
+     * @param bic the Business Identifier Code (BIC) of the bank
      */
-    void uploadCsr(UploadCsrRequest request);
+    void uploadCsr(MultipartFile file, String bic);
 
     /**
      * Reviews (approves or rejects) a pending CSR request.

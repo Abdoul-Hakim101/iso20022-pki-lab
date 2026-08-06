@@ -12,11 +12,11 @@ import so.cb.pki.csr.event.CsrApprovedEvent;
 import so.cb.pki.csr.service.CsrService;
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.ReviewCsrRequest;
-import so.cb.pki.csr.dto.UploadCsrRequest;
 import so.cb.pki.csr.entity.Csr;
 import so.cb.pki.csr.enums.CsrStatus;
 import so.cb.pki.csr.mapper.CsrMapper;
 import so.cb.pki.csr.repository.CsrRepository;
+import org.springframework.web.multipart.MultipartFile;
 import so.cb.pki.institution.service.InstitutionService;
 import so.cb.pki.shared.dto.PaginatedResponse;
 import so.cb.pki.shared.exception.ApiException;
@@ -24,7 +24,9 @@ import so.cb.pki.shared.exception.ApiException;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -40,16 +42,27 @@ public class CsrServiceImpl implements CsrService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public void uploadCsr(UploadCsrRequest request) {
-        String trimmedCsrPem = request.csrPem() != null ? request.csrPem().trim() : null;
-        log.info("Processing CSR upload request for bank BIC: {}", request.bic());
-        validateCsrPem(trimmedCsrPem);
-        UUID institutionId = institutionService.getActiveInstitutionIdByBic(request.bic());
+    public void uploadCsr(MultipartFile file, String bic) {
+        log.info("Processing CSR upload request for bank BIC: {}", bic);
 
-        UploadCsrRequest cleanRequest = new UploadCsrRequest(request.bic(), trimmedCsrPem);
-        Csr entity = CsrMapper.toEntity(cleanRequest, institutionId);
+        if (file == null || file.isEmpty()) {
+            throw new ApiException("CSR file must not be empty");
+        }
+
+        String trimmedCsrPem;
+        try {
+            trimmedCsrPem = new String(file.getBytes(), StandardCharsets.UTF_8).trim();
+        } catch (IOException e) {
+            log.error("Failed to read uploaded CSR file for BIC {}: {}", bic, e.getMessage());
+            throw new ApiException("Failed to read uploaded CSR file: " + e.getMessage());
+        }
+
+        validateCsrPem(trimmedCsrPem);
+        UUID institutionId = institutionService.getActiveInstitutionIdByBic(bic);
+
+        Csr entity = CsrMapper.toEntity(bic, trimmedCsrPem, institutionId);
         entity = csrRepository.save(entity);
-        log.info("CSR uploaded successfully with ID: {} for institutionId: {}, BIC: {}", entity.getId(), institutionId, request.bic());
+        log.info("CSR uploaded successfully with ID: {} for institutionId: {}, BIC: {}", entity.getId(), institutionId, bic);
     }
 
     private void validateCsrPem(String csrPem) {

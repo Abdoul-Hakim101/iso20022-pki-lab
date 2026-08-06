@@ -3,12 +3,13 @@ package so.cb.pki.csr.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import so.cb.pki.csr.service.CsrService;
 import so.cb.pki.csr.dto.CsrResponse;
 import so.cb.pki.csr.dto.ReviewCsrRequest;
-import so.cb.pki.csr.dto.UploadCsrRequest;
 import so.cb.pki.csr.enums.CsrStatus;
 import so.cb.pki.shared.dto.PaginatedResponse;
 import so.cb.pki.shared.dto.Response;
@@ -27,12 +28,13 @@ public class CsrController {
 
     private final CsrService csrService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response> uploadCsr(
-            @RequestBody @Valid UploadCsrRequest request,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("bic") String bic,
             HttpServletRequest httpRequest
     ) {
-        csrService.uploadCsr(request);
+        csrService.uploadCsr(file, bic);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 RequestUtils.getResponse(
                         httpRequest,

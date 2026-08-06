@@ -1,7 +1,6 @@
 package so.cb.pki.csr.mapper;
 
 import so.cb.pki.csr.dto.CsrResponse;
-import so.cb.pki.csr.dto.UploadCsrRequest;
 import so.cb.pki.csr.entity.Csr;
 import so.cb.pki.csr.enums.CsrStatus;
 
@@ -14,16 +13,13 @@ public class CsrMapper {
         // Private constructor to prevent instantiation
     }
 
-    public static Csr toEntity(UploadCsrRequest request, UUID institutionId) {
-        if (request == null) {
-            return null;
-        }
+    public static Csr toEntity(String bic, String csrPem, UUID institutionId) {
         Instant now = Instant.now();
         return Csr.builder()
                 .id(UUID.randomUUID())
                 .institutionId(institutionId)
-                .bic(request.bic())
-                .csrPem(request.csrPem())
+                .bic(bic)
+                .csrPem(csrPem)
                 .status(CsrStatus.PENDING)
                 .createdAt(now)
                 .updatedAt(now)
