@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: iso20022-postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  certificate-management-service:
+    build:
+      context: ./certificate-management-service
+      dockerfile: Dockerfile
+    container_name: certificate-management-service
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PKI_CA_DIR: ${PKI_CA_DIR}
+      PKI_CA_KEY_FILE: ${PKI_CA_KEY_FILE}
+      PKI_CA_CERT_FILE: ${PKI_CA_CERT_FILE}
+      PKI_CA_ISSUER_DN: ${PKI_CA_ISSUER_DN}
+      PKI_CA_VALIDITY_YEARS: ${PKI_CA_VALIDITY_YEARS}
+    volumes:
+      - ca_keys:${PKI_CA_DIR}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  ca_keys:

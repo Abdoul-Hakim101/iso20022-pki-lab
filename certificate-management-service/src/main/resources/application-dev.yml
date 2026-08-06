@@ -13,3 +13,15 @@ DB_USERNAME: user
 DB_PASSWORD: 123456
 DB_DDL_STRATEGY: validate
 DB_SHOW_SQL: true
+
+# PKI CA Configuration
+PKI_CA_DIR: ./keys/ca
+PKI_CA_KEY_FILE: private.pem
+PKI_CA_CERT_FILE: chain.pem
+PKI_CA_ISSUER_DN: CN=Central Bank of Somalia Root CA, O=Central Bank of Somalia, C=SO
+PKI_CA_VALIDITY_YEARS: 10
+
+# Events Retry Configuration
+EVENTS_RETRY_MAX_ATTEMPTS: 5
+EVENTS_RETRY_DELAY: PT60S
+

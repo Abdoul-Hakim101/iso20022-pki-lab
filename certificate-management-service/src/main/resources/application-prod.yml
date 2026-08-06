@@ -1,0 +1,27 @@
+# Profiles
+SPRING_PROFILES_ACTIVE: prod
+
+# springdoc (disabled in prod)
+SPRING_DOC_API_DOCS_ENABLED: false
+SPRING_DOC_SWAGGER_UI_ENABLED: false
+
+# Database
+DB_HOST: ${DB_HOST:postgres}
+DB_PORT: ${DB_PORT:5432}
+DB_NAME: ${DB_NAME:certificate_db}
+DB_USERNAME: ${DB_USERNAME}
+DB_PASSWORD: ${DB_PASSWORD}
+DB_DDL_STRATEGY: validate
+DB_SHOW_SQL: false
+
+# PKI CA Configuration (Enterprise POSIX directory)
+PKI_CA_DIR: ${PKI_CA_DIR:/etc/pki/ca}
+PKI_CA_KEY_FILE: ${PKI_CA_KEY_FILE:private.pem}
+PKI_CA_CERT_FILE: ${PKI_CA_CERT_FILE:chain.pem}
+PKI_CA_ISSUER_DN: ${PKI_CA_ISSUER_DN:CN=Central Bank of Somalia Root CA, O=Central Bank of Somalia, C=SO}
+PKI_CA_VALIDITY_YEARS: ${PKI_CA_VALIDITY_YEARS:10}
+
+# Events Retry Configuration
+EVENTS_RETRY_MAX_ATTEMPTS: ${EVENTS_RETRY_MAX_ATTEMPTS:5}
+EVENTS_RETRY_DELAY: ${EVENTS_RETRY_DELAY:PT60S}
+

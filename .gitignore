@@ -23,3 +23,8 @@ Thumbs.db
 # Environment and secrets
 .env
 *.local
+keys/
+**/keys/
+*.key
+*.pem
+!chain.pem

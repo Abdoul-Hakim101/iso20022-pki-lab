@@ -33,3 +33,17 @@ springdoc:
     enabled: ${SPRING_DOC_API_DOCS_ENABLED:false}
   swagger-ui:
     enabled: ${SPRING_DOC_SWAGGER_UI_ENABLED:false}
+
+pki:
+  ca:
+    dir: ${PKI_CA_DIR:./keys/ca}
+    private-key-file: ${PKI_CA_KEY_FILE:private.pem}
+    certificate-file: ${PKI_CA_CERT_FILE:chain.pem}
+    issuer-dn: ${PKI_CA_ISSUER_DN:CN=Central Bank of Somalia Root CA, O=Central Bank of Somalia, C=SO}
+    validity-years: ${PKI_CA_VALIDITY_YEARS:10}
+
+application:
+  events:
+    retry:
+      max-attempts: ${EVENTS_RETRY_MAX_ATTEMPTS:5}
+      delay: ${EVENTS_RETRY_DELAY:PT60S}
