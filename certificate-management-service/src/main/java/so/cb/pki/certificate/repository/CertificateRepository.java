@@ -26,7 +26,9 @@ public interface CertificateRepository extends JpaRepository<Certificate, UUID> 
 
     @Query("SELECT c FROM Certificate c WHERE " +
            "(:status IS NULL OR c.status = :status) AND " +
-           "(:search IS NULL OR LOWER(c.bic) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.serialNumber) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "(:search IS NULL OR :search = '' OR " +
+           "LOWER(c.bic) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) OR " +
+           "LOWER(c.serialNumber) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))")
     Page<Certificate> search(
             @Param("status") CertificateStatus status,
             @Param("search") String search,

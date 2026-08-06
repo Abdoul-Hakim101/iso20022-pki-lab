@@ -57,23 +57,6 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean isInstitutionActive(String bic) {
-        log.debug("Checking if institution BIC '{}' is active", bic);
-        return institutionRepository.findByBic(bic)
-                .map(institution -> institution.getStatus() == InstitutionStatus.ACTIVE)
-                .orElse(false);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public InstitutionResponse getInstitutionById(UUID id) {
-        log.debug("Fetching institution details by ID: {}", id);
-        Institution entity = getById(id);
-        return InstitutionMapper.toResponse(entity);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public UUID getActiveInstitutionIdByBic(String bic) {
         log.debug("Fetching active institution ID for BIC: '{}'", bic);
         return institutionRepository.findActiveIdByBic(bic)
@@ -81,6 +64,15 @@ public class InstitutionServiceImpl implements InstitutionService {
                     log.warn("Institution lookup failed. BIC '{}' is not registered or active", bic);
                     return new ApiException("Institution with BIC '" + bic + "' is not registered or active");
                 });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getInstitutionNameById(UUID id) {
+        log.debug("Fetching institution name for ID: {}", id);
+        return institutionRepository.findById(id)
+                .map(Institution::getName)
+                .orElse("Unknown Institution");
     }
 
     @Override

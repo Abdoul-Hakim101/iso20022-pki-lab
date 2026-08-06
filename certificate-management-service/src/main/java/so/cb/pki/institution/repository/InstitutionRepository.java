@@ -13,9 +13,6 @@ import java.util.UUID;
 
 @Repository
 public interface InstitutionRepository extends JpaRepository<Institution, UUID> {
-
-    Optional<Institution> findByBic(String bic);
-
     boolean existsByBic(String bic);
 
     @Query("SELECT i.id FROM Institution i WHERE i.bic = :bic AND i.status = 'ACTIVE'")
@@ -23,7 +20,7 @@ public interface InstitutionRepository extends JpaRepository<Institution, UUID> 
 
     @Query("SELECT i FROM Institution i WHERE " +
            "(:search IS NULL OR :search = '' OR " +
-           "LOWER(i.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(i.bic) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "LOWER(i.name) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) OR " +
+           "LOWER(i.bic) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))")
     Page<Institution> search(@Param("search") String search, Pageable pageable);
 }

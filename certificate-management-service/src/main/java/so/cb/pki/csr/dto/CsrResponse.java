@@ -8,8 +8,8 @@ import java.util.UUID;
 public record CsrResponse(
     UUID id,
     UUID institutionId,
+    String institutionName,
     String bic,
-    String csrPem,
     CsrStatus status,
     String rejectionReason,
     Instant createdAt,

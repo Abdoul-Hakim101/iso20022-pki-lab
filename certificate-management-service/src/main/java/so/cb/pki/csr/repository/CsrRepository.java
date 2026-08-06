@@ -22,6 +22,6 @@ public interface CsrRepository extends JpaRepository<Csr, UUID> {
     @Query("SELECT c FROM Csr c WHERE " +
            "(:status IS NULL OR c.status = :status) AND " +
            "(:search IS NULL OR :search = '' OR " +
-           "LOWER(c.bic) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "LOWER(c.bic) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))")
     Page<Csr> search(@Param("status") CsrStatus status, @Param("search") String search, Pageable pageable);
 }

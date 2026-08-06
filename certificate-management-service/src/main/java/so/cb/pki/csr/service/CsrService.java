@@ -54,12 +54,4 @@ public interface CsrService {
      * @return paginated response of matching CSRs
      */
     PaginatedResponse<CsrResponse> getCsrs(CsrStatus status, String search, int pageNumber, int pageSize);
-
-    /**
-     * Retrieves the PEM-encoded content of an APPROVED CSR for certificate issuance by the CA.
-     *
-     * @param csrId the unique identifier of the approved CSR
-     * @return raw PEM text of the CSR
-     */
-    String getApprovedCsrPem(UUID csrId);
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import so.cb.pki.certificate.dto.CertificateSummary;
 import so.cb.pki.certificate.service.CertificateService;
 import so.cb.pki.certificate.ca.CaKeyProvider;
 import so.cb.pki.certificate.dto.CertificateResponse;
@@ -15,6 +16,7 @@ import so.cb.pki.certificate.entity.Certificate;
 import so.cb.pki.certificate.enums.CertificateStatus;
 import so.cb.pki.certificate.mapper.CertificateMapper;
 import so.cb.pki.certificate.repository.CertificateRepository;
+import so.cb.pki.institution.service.InstitutionService;
 import so.cb.pki.shared.dto.PaginatedResponse;
 import so.cb.pki.shared.exception.ApiException;
 
@@ -33,6 +35,7 @@ public class CertificateServiceImpl implements CertificateService {
     private final CertificateRepository certificateRepository;
     private final CaKeyProvider caKeyProvider;
     private final CaSigningEngine caSigningEngine;
+    private final InstitutionService institutionService;
 
     @Override
     public CertificateResponse issueCertificate(UUID csrId, UUID institutionId, String bic, String csrPem) {
@@ -66,14 +69,6 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public CertificateResponse getCertificateById(UUID id) {
-        log.debug("Fetching certificate by ID: {}", id);
-        Certificate entity = getById(id);
-        return CertificateMapper.toResponse(entity);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public CertificateResponse getCertificateBySerialNumber(String serialNumber) {
         log.debug("Fetching certificate by SerialNumber: {}", serialNumber);
         Certificate entity = getBySerialNumber(serialNumber);
@@ -82,22 +77,16 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CertificateResponse> getCertificatesByBic(String bic) {
-        log.debug("Fetching certificates for bank BIC: {}", bic);
-        return certificateRepository.findByBic(bic).stream()
-                .map(CertificateMapper::toResponse)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PaginatedResponse<CertificateResponse> getCertificates(CertificateStatus status, String search, int pageNumber, int pageSize) {
+    public PaginatedResponse<CertificateSummary> getCertificates(CertificateStatus status, String search, int pageNumber, int pageSize) {
         log.debug("Searching certificate records (status: {}, search: '{}', page: {}, size: {})", status, search, pageNumber, pageSize);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Certificate> page = certificateRepository.search(status, search, pageable);
 
-        List<CertificateResponse> items = page.getContent().stream()
-                .map(CertificateMapper::toResponse)
+        List<CertificateSummary> items = page.getContent().stream()
+                .map(entity -> {
+                    String institutionName = institutionService.getInstitutionNameById(entity.getInstitutionId());
+                    return CertificateMapper.toSummary(entity, institutionName);
+                })
                 .toList();
 
         return new PaginatedResponse<>(
@@ -134,6 +123,14 @@ public class CertificateServiceImpl implements CertificateService {
     public String getCaChainPem() {
         log.debug("Fetching Root CA trust chain PEM");
         return caKeyProvider.getChainPem();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getCertificatePem(String serialNumber) {
+        log.debug("Fetching leaf certificate PEM text for SerialNumber: {}", serialNumber);
+        Certificate entity = getBySerialNumber(serialNumber);
+        return entity.getCertificatePem();
     }
 
     @Override

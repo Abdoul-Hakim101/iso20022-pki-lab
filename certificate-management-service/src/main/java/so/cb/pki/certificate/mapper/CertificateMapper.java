@@ -1,6 +1,7 @@
 package so.cb.pki.certificate.mapper;
 
 import so.cb.pki.certificate.dto.CertificateResponse;
+import so.cb.pki.certificate.dto.CertificateSummary;
 import so.cb.pki.certificate.entity.Certificate;
 
 public final class CertificateMapper {
@@ -27,6 +28,26 @@ public final class CertificateMapper {
                 entity.getValidTo(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
+        );
+    }
+
+    public static CertificateSummary toSummary(Certificate entity, String institutionName) {
+        if (entity == null) {
+            return null;
+        }
+
+        return new CertificateSummary(
+                entity.getId(),
+                entity.getInstitutionId(),
+                institutionName,
+                entity.getCsrId(),
+                entity.getBic(),
+                entity.getSerialNumber(),
+                entity.getStatus(),
+                entity.getValidFrom(),
+                entity.getValidTo(),
+                entity.getRevokedAt(),
+                entity.getCreatedAt()
         );
     }
 }

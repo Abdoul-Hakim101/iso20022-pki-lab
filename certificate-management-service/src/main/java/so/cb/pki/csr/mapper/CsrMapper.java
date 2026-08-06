@@ -26,15 +26,15 @@ public class CsrMapper {
                 .build();
     }
 
-    public static CsrResponse toResponse(Csr entity) {
+    public static CsrResponse toResponse(Csr entity, String institutionName) {
         if (entity == null) {
             return null;
         }
         return new CsrResponse(
                 entity.getId(),
                 entity.getInstitutionId(),
+                institutionName,
                 entity.getBic(),
-                entity.getCsrPem(),
                 entity.getStatus(),
                 entity.getRejectionReason(),
                 entity.getCreatedAt(),

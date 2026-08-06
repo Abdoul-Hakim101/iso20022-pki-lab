@@ -27,28 +27,20 @@ public interface InstitutionService {
     InstitutionResponse updateInstitutionStatus(UUID id, InstitutionStatus status);
 
     /**
-     * Checks if a given BIC code is associated with a registered and active institution.
-     *
-     * @param bic the Business Identifier Code (BIC) to check
-     * @return true if the institution is registered and has ACTIVE status, false otherwise
-     */
-    boolean isInstitutionActive(String bic);
-
-    /**
-     * Retrieves an institution by its unique identifier.
-     *
-     * @param id the unique identifier of the institution
-     * @return the institution details
-     */
-    InstitutionResponse getInstitutionById(UUID id);
-
-    /**
      * Retrieves the ID of an institution by BIC code if it is registered and has ACTIVE status in a single query.
      *
      * @param bic the Business Identifier Code (BIC)
      * @return the unique identifier UUID of the active institution
      */
     UUID getActiveInstitutionIdByBic(String bic);
+
+    /**
+     * Retrieves the name of an institution by its unique identifier.
+     *
+     * @param id the unique identifier UUID of the institution
+     * @return the name of the institution
+     */
+    String getInstitutionNameById(UUID id);
 
     /**
      * Retrieves a paginated list of institutions, optionally filtered by a search term.
