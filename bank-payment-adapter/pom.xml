@@ -77,6 +77,14 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- Prowide ISO 20022 Models & Parser -->
+		<dependency>
+			<groupId>com.prowidesoftware</groupId>
+			<artifactId>pw-iso20022</artifactId>
+			<version>SRU2025-10.3.10</version>
+			<scope>compile</scope>
+		</dependency>
+
 		<!-- Spring Modulith -->
 		<dependency>
 			<groupId>org.springframework.modulith</groupId>

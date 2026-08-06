@@ -36,6 +36,7 @@ info:
     environment: ${SPRING_PROFILES_ACTIVE:dev}
 
 adapter:
+  bank-bic: ${BANK_BIC:PMRBSOMM}
   certs:
     dir: ${CERTS_DIR:./certs}
     ca-cert-file: ${CA_CERT_FILE:chain.pem}
