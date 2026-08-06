@@ -1,4 +1,4 @@
-package so.cb.adapter.config;
+package so.cb.adapter.shared.config;
 
 import lombok.Getter;
 import lombok.Setter;

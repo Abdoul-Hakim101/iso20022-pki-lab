@@ -1,4 +1,4 @@
-package so.cb.adapter.security;
+package so.cb.adapter.shared.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import so.cb.adapter.config.AdapterProperties;
+import so.cb.adapter.shared.config.AdapterProperties;
 
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;

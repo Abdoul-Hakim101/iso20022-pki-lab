@@ -10,7 +10,8 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import so.cb.adapter.config.AdapterProperties;
+import so.cb.adapter.shared.config.AdapterProperties;
+import so.cb.adapter.shared.security.AdapterStartupValidator;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
