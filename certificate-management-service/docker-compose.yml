@@ -41,6 +41,7 @@ services:
       PKI_CA_CERT_FILE: ${PKI_CA_CERT_FILE}
       PKI_CA_ISSUER_DN: ${PKI_CA_ISSUER_DN}
       PKI_CA_VALIDITY_YEARS: ${PKI_CA_VALIDITY_YEARS}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
     volumes:
       - ca_keys:${PKI_CA_DIR}
     depends_on:
