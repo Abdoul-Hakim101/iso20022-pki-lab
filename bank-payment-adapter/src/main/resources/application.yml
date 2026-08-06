@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: bank-payment-adapter
+
+adapter:
+  certs:
+    dir: ${CERTS_DIR:./certs}
+    ca-cert-file: ${CA_CERT_FILE:chain.pem}
+    bank-cert-file: ${BANK_CERT_FILE:certificate.pem}
+    private-key-file: ${PRIVATE_KEY_FILE:private.pem}
+    strict-startup-check: ${STRICT_STARTUP_CHECK:true}
