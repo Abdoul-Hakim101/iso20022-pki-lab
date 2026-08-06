@@ -14,12 +14,12 @@ The Certificate Management Service acts as the **Central Bank Certificate Author
 
 ```mermaid
 flowchart LR
-    Bank[Commercial Bank\nGenerates Private Key & request.csr] -->|POST /api/v1/csrs| CSR[csr module\nValidates & Stores PENDING CSR]
-    Admin[Central Bank Admin] -->|PATCH /api/v1/csrs/{id}/review| CSR
-    CSR -->|Publishes CsrApprovedEvent| NOTIF[notification module\nListens to Event]
-    NOTIF -->|Triggers Issuance| CERT[certificate module\nBouncyCastle CA Engine]
-    CERT -->|Signs X.509 Cert| DB[(PostgreSQL pki.certificate)]
-    Bank -->|GET /api/v1/certificates/chain.pem| CERT
+Bank["Commercial Bank<br/>Generates Private Key & request.csr"] -->|POST /api/v1/csrs| CSR["csr module<br/>Validates & Stores PENDING CSR"]
+Admin["Central Bank Admin"] -->|PATCH /api/v1/csrs/:id/review| CSR
+CSR -->|Publishes CsrApprovedEvent| NOTIF["notification module<br/>Listens to Event"]
+NOTIF -->|Triggers Issuance| CERT["certificate module<br/>BouncyCastle CA Engine"]
+CERT -->|Signs X.509 Cert| DB[("PostgreSQL pki.certificate")]
+Bank -->|GET /api/v1/certificates/chain.pem| CERT
 ```
 
 ---
@@ -130,8 +130,3 @@ docker compose up -d
 # View container logs
 docker compose logs -f certificate-management-service
 ```
-
----
-
-## 📜 License
-Central Bank of Somalia PKI Lab — All Rights Reserved.

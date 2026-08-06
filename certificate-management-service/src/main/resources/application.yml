@@ -34,6 +34,9 @@ springdoc:
   swagger-ui:
     enabled: ${SPRING_DOC_SWAGGER_UI_ENABLED:false}
 
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:3001}
+
 pki:
   ca:
     dir: ${PKI_CA_DIR:./keys/ca}
