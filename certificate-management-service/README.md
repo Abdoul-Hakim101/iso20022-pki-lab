@@ -2,6 +2,10 @@
 
 An enterprise-grade **Public Key Infrastructure (PKI) & Certificate Lifecycle Management Service** for Central Bank payment systems and commercial bank ISO 20022 XML digital signatures. Built with **Java 24**, **Spring Boot 4**, **Spring Modulith**, **PostgreSQL 17**, and **BouncyCastle Crypto APIs**.
 
+> [!NOTE]
+> **Educational & Practice Lab Project**
+> This repository is built strictly for educational, research, and practice purposes to demonstrate real-world implementation of **Central Bank Public Key Infrastructure (PKI)**, **ISO 20022 XML Digital Signatures**, and **Spring Modulith Architecture**.
+
 ---
 
 ## 🏛️ System Overview
