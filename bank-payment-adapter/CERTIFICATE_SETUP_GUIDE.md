@@ -42,11 +42,8 @@ Submit the generated `request.csr` text content to the Central Bank PKI Service 
 
 ```bash
 curl -X POST "http://localhost:8080/api/v1/csrs" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "bic": "PMRBSOMM",
-    "csrPem": "-----BEGIN CERTIFICATE REQUEST-----\nMIICvDCCAaQCAQAwdzELMAkGA1UEBhMCU08xHzAdBgNVBAoMFkNlbnRyYWwgQmFu...\n-----END CERTIFICATE REQUEST-----"
-  }'
+  -F "bic=PMRBSOMM" \
+  -F "file=@request.csr"
 ```
 
 *Response*:

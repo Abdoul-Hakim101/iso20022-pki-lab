@@ -73,7 +73,7 @@ The application strictly enforces **Spring Modulith** encapsulation boundaries a
 - `GET /api/v1/institutions/active?bic=PMRBSOMM` — Check if institution is active
 
 ### 2. CSR Management (`/api/v1/csrs`)
-- `POST /api/v1/csrs` — Commercial bank uploads CSR (`request.csr`)
+- `POST /api/v1/csrs` — Commercial bank uploads CSR (`multipart/form-data` with `file` and `bic` form fields)
 - `PATCH /api/v1/csrs/{id}/review` — Admin approves or rejects CSR
 - `GET /api/v1/csrs/{id}` — Retrieve CSR details by ID
 - `GET /api/v1/csrs/institution/{bic}` — Retrieve bank CSRs by BIC
