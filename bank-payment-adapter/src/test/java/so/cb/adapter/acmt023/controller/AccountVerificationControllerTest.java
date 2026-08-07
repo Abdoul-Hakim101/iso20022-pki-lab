@@ -63,7 +63,7 @@ class AccountVerificationControllerTest {
     }
 
     @Test
-    void testSignAcmt023Request_Account_Success() throws Exception {
+    void testSignAcmt023_Prowide_XAdES_Success() throws Exception {
         String jsonPayload = """
                 {
                   "receiverBic": "IBSBSOMM",
@@ -72,7 +72,7 @@ class AccountVerificationControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/adapter/acmt023/sign")
+        mockMvc.perform(post("/api/v1/adapter/acmt023/prowide/sign")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
@@ -82,11 +82,15 @@ class AccountVerificationControllerTest {
                 .andExpect(content().string(containsString("IBSBSOMM")))
                 .andExpect(content().string(containsString("4005006007")))
                 .andExpect(content().string(containsString("ACCT")))
-                .andExpect(content().string(containsString("Signature")));
+                .andExpect(content().string(containsString("Signature")))
+                .andExpect(content().string(containsString("QualifyingProperties")))
+                .andExpect(content().string(containsString("SigningTime")))
+                .andExpect(content().string(containsString("X509IssuerSerial")))
+                .andExpect(content().string(containsString("X509IssuerName")));
     }
 
     @Test
-    void testSignAcmt023Request_Phone_Success() throws Exception {
+    void testSignAcmt023_Template_XAdES_Success() throws Exception {
         String jsonPayload = """
                 {
                   "receiverBic": "IBSBSOMM",
@@ -95,7 +99,7 @@ class AccountVerificationControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/adapter/acmt023/sign")
+        mockMvc.perform(post("/api/v1/adapter/acmt023/template/sign")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
@@ -103,11 +107,38 @@ class AccountVerificationControllerTest {
                 .andExpect(content().string(containsString("<FPEnvelope")))
                 .andExpect(content().string(containsString("+252615000000")))
                 .andExpect(content().string(containsString("MSIS")))
-                .andExpect(content().string(containsString("Signature")));
+                .andExpect(content().string(containsString("Signature")))
+                .andExpect(content().string(containsString("QualifyingProperties")))
+                .andExpect(content().string(containsString("SigningTime")))
+                .andExpect(content().string(containsString("X509IssuerSerial")));
     }
 
     @Test
-    void testSignAcmt023Request_Wallet_Success() throws Exception {
+    void testSignAcmt023_JAXB_XAdES_Success() throws Exception {
+        String jsonPayload = """
+                {
+                  "receiverBic": "IBSBSOMM",
+                  "accountIdentifier": "620050014",
+                  "identifierType": "MSIS"
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/adapter/acmt023/jaxb/sign")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPayload))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_XML))
+                .andExpect(content().string(containsString("<FPEnvelope")))
+                .andExpect(content().string(containsString("620050014")))
+                .andExpect(content().string(containsString("MSIS")))
+                .andExpect(content().string(containsString("Signature")))
+                .andExpect(content().string(containsString("QualifyingProperties")))
+                .andExpect(content().string(containsString("SigningTime")))
+                .andExpect(content().string(containsString("X509IssuerSerial")));
+    }
+
+    @Test
+    void testSignAcmt023_Prowide_Wallet_Success() throws Exception {
         String jsonPayload = """
                 {
                   "receiverBic": "IBSBSOMM",
@@ -116,7 +147,7 @@ class AccountVerificationControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/adapter/acmt023/sign")
+        mockMvc.perform(post("/api/v1/adapter/acmt023/prowide/sign")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
@@ -124,11 +155,12 @@ class AccountVerificationControllerTest {
                 .andExpect(content().string(containsString("<FPEnvelope")))
                 .andExpect(content().string(containsString("EWLT-998877")))
                 .andExpect(content().string(containsString("EWLT")))
-                .andExpect(content().string(containsString("Signature")));
+                .andExpect(content().string(containsString("Signature")))
+                .andExpect(content().string(containsString("QualifyingProperties")));
     }
 
     @Test
-    void testSignAcmt023Request_IBAN_Success() throws Exception {
+    void testSignAcmt023_Template_IBAN_Success() throws Exception {
         String jsonPayload = """
                 {
                   "receiverBic": "IBSBSOMM",
@@ -137,7 +169,7 @@ class AccountVerificationControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/api/v1/adapter/acmt023/sign")
+        mockMvc.perform(post("/api/v1/adapter/acmt023/template/sign")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonPayload))
                 .andExpect(status().isCreated())
@@ -145,7 +177,8 @@ class AccountVerificationControllerTest {
                 .andExpect(content().string(containsString("<FPEnvelope")))
                 .andExpect(content().string(containsString("SO82PMRB0000004005006007")))
                 .andExpect(content().string(containsString("IBAN")))
-                .andExpect(content().string(containsString("Signature")));
+                .andExpect(content().string(containsString("Signature")))
+                .andExpect(content().string(containsString("QualifyingProperties")));
     }
 
     private static void generateTestCertificates(Path dir) throws Exception {
