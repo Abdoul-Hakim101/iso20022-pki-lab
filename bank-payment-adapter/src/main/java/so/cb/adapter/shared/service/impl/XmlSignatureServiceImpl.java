@@ -19,6 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import so.cb.adapter.shared.config.AdapterProperties;
+import so.cb.adapter.shared.exception.XmlSignatureException;
 import so.cb.adapter.shared.service.XmlSignatureService;
 
 import javax.xml.crypto.NodeSetData;
@@ -220,7 +221,7 @@ public class XmlSignatureServiceImpl implements XmlSignatureService {
 
         } catch (Exception e) {
             log.error("Failed to generate W3C XAdES-BES XML Digital Signature: {}", e.getMessage(), e);
-            throw new IllegalStateException("Failed to sign ISO 20022 XML document: " + e.getMessage(), e);
+            throw new XmlSignatureException("Failed to sign ISO 20022 XML document: " + e.getMessage(), e);
         }
     }
 

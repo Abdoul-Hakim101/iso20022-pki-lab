@@ -99,7 +99,7 @@ public class ProwideAcmt023DocumentBuilderImpl implements ProwideAcmt023Document
 
         } catch (Exception e) {
             log.error("Failed to generate Prowide ISO 20022 document XML: {}", e.getMessage(), e);
-            throw new IllegalStateException("Prowide ISO 20022 document generation failed: " + e.getMessage(), e);
+            throw new so.cb.adapter.shared.exception.InvalidIsoDocumentException("Prowide ISO 20022 document generation failed: " + e.getMessage(), e);
         }
     }
 }

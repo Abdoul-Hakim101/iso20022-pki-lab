@@ -77,7 +77,7 @@ public class JaxbAcmt023DocumentBuilderImpl implements JaxbAcmt023DocumentBuilde
 
         } catch (Exception e) {
             log.error("Failed to generate JAXB ISO 20022 document XML: {}", e.getMessage(), e);
-            throw new IllegalStateException("JAXB ISO 20022 document generation failed: " + e.getMessage(), e);
+            throw new so.cb.adapter.shared.exception.InvalidIsoDocumentException("JAXB ISO 20022 document generation failed: " + e.getMessage(), e);
         }
     }
 

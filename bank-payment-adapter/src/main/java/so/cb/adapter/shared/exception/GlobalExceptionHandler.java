@@ -19,6 +19,35 @@ import java.util.stream.Collectors;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(XmlSignatureException.class)
+    public ResponseEntity<Response> handleXmlSignatureException(XmlSignatureException ex, HttpServletRequest request) {
+        log.error("XmlSignatureException at [{} {}]: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
+        return buildResponseEntity(request, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
+
+    @ExceptionHandler(InvalidIsoDocumentException.class)
+    public ResponseEntity<Response> handleInvalidIsoDocumentException(InvalidIsoDocumentException ex, HttpServletRequest request) {
+        log.warn("InvalidIsoDocumentException at [{} {}]: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return buildResponseEntity(request, ex.getMessage(), HttpStatus.BAD_REQUEST, ex);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Response> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        log.warn("IllegalArgumentException at [{} {}]: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return buildResponseEntity(request, ex.getMessage(), HttpStatus.BAD_REQUEST, ex);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Response> handleIllegalStateException(IllegalStateException ex, HttpServletRequest request) {
+        log.error("IllegalStateException at [{} {}]: {}",
+                request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
+        return buildResponseEntity(request, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
+
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Response> handleNoResourceFoundException(NoResourceFoundException ex, HttpServletRequest request) {
         log.warn("Resource not found at [{} {}]: {}",
