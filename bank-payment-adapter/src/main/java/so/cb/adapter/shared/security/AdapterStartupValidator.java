@@ -116,7 +116,7 @@ public class AdapterStartupValidator implements CommandLineRunner {
     }
 
     private void verifyKeypairMatch(PrivateKey privateKey, X509Certificate cert) throws Exception {
-        byte[] testPayload = "SPS-ADAPTER-STARTUP-VERIFICATION-PAYLOAD".getBytes(StandardCharsets.UTF_8);
+        byte[] testPayload = "ADAPTER-STARTUP-VERIFICATION-PAYLOAD".getBytes(StandardCharsets.UTF_8);
 
         Signature signer = Signature.getInstance("SHA256withRSA");
         signer.initSign(privateKey);

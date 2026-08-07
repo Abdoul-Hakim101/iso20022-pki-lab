@@ -31,7 +31,7 @@ management:
 info:
   app:
     name: ${spring.application.name}
-    description: Somali Payment Switch (SPS) Bank Payment Adapter Service
+    description: Bank Payment Adapter Service
     version: 1.0.0
     environment: ${SPRING_PROFILES_ACTIVE:dev}
 
@@ -42,4 +42,10 @@ adapter:
     ca-cert-file: ${CA_CERT_FILE:chain.pem}
     bank-cert-file: ${BANK_CERT_FILE:certificate.pem}
     private-key-file: ${PRIVATE_KEY_FILE:private.pem}
+    private-key-passphrase: ${PRIVATE_KEY_PASSPHRASE:}
     strict-startup-check: ${STRICT_STARTUP_CHECK:true}
+  signature:
+    algorithm: ${SIGNATURE_ALGORITHM:SHA256withRSA}
+    canonicalization: ${CANONICALIZATION_ALGORITHM:EXCLUSIVE}
+    xades-enabled: ${XADES_ENABLED:true}
+    xades-namespace: ${XADES_NAMESPACE:http://uri.etsi.org/01903/v1.3.2#}

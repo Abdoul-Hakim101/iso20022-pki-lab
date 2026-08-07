@@ -1,19 +1,24 @@
-# Active Profile
-SPRING_PROFILES_ACTIVE: prod
+# Production Profile Configuration
+server:
+  port: ${PORT:8081}
 
-# Server Port
-SERVER_PORT: ${SERVER_PORT:8081}
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
 
-# springdoc (disabled in prod)
-SPRING_DOC_API_DOCS_ENABLED: false
-SPRING_DOC_SWAGGER_UI_ENABLED: false
-
-# CORS Configuration
-CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:https://your-production-domain.com}
-
-# Certificate Configuration (POSIX enterprise directory)
-CERTS_DIR: ${CERTS_DIR:/etc/adapter/certs}
-CA_CERT_FILE: ${CA_CERT_FILE:chain.pem}
-BANK_CERT_FILE: ${BANK_CERT_FILE:certificate.pem}
-PRIVATE_KEY_FILE: ${PRIVATE_KEY_FILE:private.pem}
-STRICT_STARTUP_CHECK: ${STRICT_STARTUP_CHECK:true}
+adapter:
+  bank-bic: ${BANK_BIC:PMRBSOMM}
+  certs:
+    dir: ${CERTS_DIR:/etc/adapter/certs}
+    ca-cert-file: ${CA_CERT_FILE:chain.pem}
+    bank-cert-file: ${BANK_CERT_FILE:certificate.pem}
+    private-key-file: ${PRIVATE_KEY_FILE:private.pem}
+    private-key-passphrase: ${PRIVATE_KEY_PASSPHRASE:}
+    strict-startup-check: ${STRICT_STARTUP_CHECK:true}
+  signature:
+    algorithm: ${SIGNATURE_ALGORITHM:SHA256withRSA}
+    canonicalization: ${CANONICALIZATION_ALGORITHM:EXCLUSIVE}
+    xades-enabled: ${XADES_ENABLED:true}
+    xades-namespace: ${XADES_NAMESPACE:http://uri.etsi.org/01903/v1.3.2#}

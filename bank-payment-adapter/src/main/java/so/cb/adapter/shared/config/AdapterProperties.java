@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class AdapterProperties {
 
     private String bankBic = "PMRBSOMM";
-
     private Certs certs = new Certs();
+    private Signature signature = new Signature();
 
     @Getter
     @Setter
@@ -22,7 +22,17 @@ public class AdapterProperties {
         private String caCertFile = "chain.pem";
         private String bankCertFile = "certificate.pem";
         private String privateKeyFile = "private.pem";
+        private String privateKeyPassphrase = "";
         private boolean strictStartupCheck = true;
+    }
+
+    @Getter
+    @Setter
+    public static class Signature {
+        private String algorithm = "SHA256withRSA";
+        private String canonicalization = "EXCLUSIVE";
+        private boolean xadesEnabled = true;
+        private String xadesNamespace = "http://uri.etsi.org/01903/v1.3.2#";
     }
 
     public String getDir() {
@@ -59,6 +69,15 @@ public class AdapterProperties {
     public void setPrivateKeyFile(String privateKeyFile) {
         if (certs == null) certs = new Certs();
         certs.setPrivateKeyFile(privateKeyFile);
+    }
+
+    public String getPrivateKeyPassphrase() {
+        return certs != null ? certs.getPrivateKeyPassphrase() : "";
+    }
+
+    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+        if (certs == null) certs = new Certs();
+        certs.setPrivateKeyPassphrase(privateKeyPassphrase);
     }
 
     public boolean isStrictStartupCheck() {
